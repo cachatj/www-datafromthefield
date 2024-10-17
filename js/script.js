@@ -19,7 +19,8 @@ document.getElementById('calendar-form').addEventListener('submit', async functi
         });
         
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            const errorText = await response.text();
+            throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
         }
         
         const data = await response.json();
@@ -29,11 +30,11 @@ document.getElementById('calendar-form').addEventListener('submit', async functi
             downloadLink.href = data.downloadUrl;
             document.getElementById('result').classList.remove('d-none');
         } else {
-            throw new Error('Calendar generation failed');
+            throw new Error('Calendar generation failed: ' + (data.message || 'Unknown error'));
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('An error occurred while generating the calendar. Please try again.');
+        alert('An error occurred while generating the calendar: ' + error.message);
     } finally {
         // Hide loading indicator
         document.getElementById('loading').classList.add('d-none');
